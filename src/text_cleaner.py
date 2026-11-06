@@ -1,3 +1,4 @@
+
 import re
 
 from langchain_core.documents import Document
@@ -17,18 +18,17 @@ def clean_documents(documents):
         # Remove repeated spaces and tabs
         text = re.sub(r"[ \t]+", " ", text)
 
-         # Remove excessive blank lines
+        # Remove excessive blank lines
         text = re.sub(r"\n{3,}", "\n\n", text)
 
-         # Remove leading and trailing spaces
+        # Remove leading and trailing spaces
         text = text.strip()
 
         if not text:
             continue
 
-
         cleaned_documents.append(
-            documents(
+            Document(
                 page_content=text,
                 metadata=doc.metadata
             )
