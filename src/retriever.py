@@ -1,8 +1,11 @@
+from functools import lru_cache
+
 from langchain_chroma import Chroma
 
 from src.embeddings import get_embedding_model
 
 
+@lru_cache(maxsize=1)
 def initialize_retriever():
 
     # Load the embedding model
@@ -18,6 +21,7 @@ def initialize_retriever():
     return vector_db
 
 
+
 def retrieve_documents(query, k=3):
 
     # Initialize vector database
@@ -30,6 +34,34 @@ def retrieve_documents(query, k=3):
     )
 
     return results
+
+def retrieve_documents_mmr(query, k=3):
+
+    vector_db = initialize_retriever()
+
+    results = vector_db.max_marginal_relevance_search(
+        query,
+        k=k,
+        fetch_k=10,
+        lambda_mult=0.5
+    )
+
+    return results
+
+
+
+def retrieve_from_source(query, source, k=3):
+
+    vector_db = initialize_retriever()
+
+    results = vector_db.similarity_search(
+        query,
+        k=k,
+        filter={"source": source}
+    )
+
+    return results
+
 
 
 def display_results(results):
